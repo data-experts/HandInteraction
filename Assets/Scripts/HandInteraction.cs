@@ -48,10 +48,11 @@ public class HandInteraction : MonoBehaviour, HandInteractionMaster
     private void InteractionManager_SourceUpdated(InteractionSourceState state)
     {
         RaycastHit hitInfo;
-        Vector3 handGesture;
-        if (state.properties.location.TryGetPosition(out handGesture))
-        { 
-            Physics.Raycast(Camera.main.transform.position, handGesture, out hitInfo);
+        Vector3 handGesturePos;
+        if (state.properties.location.TryGetPosition(out handGesturePos))
+        {
+            var handGestureDirection = handGesturePos - Camera.main.transform.position;
+            Physics.Raycast(Camera.main.transform.position, handGestureDirection, out hitInfo);
             if (hitInfo.collider != null)
             {
                 CurFocusedObj = hitInfo.collider.gameObject;
@@ -61,7 +62,7 @@ public class HandInteraction : MonoBehaviour, HandInteractionMaster
                 }
                 if (showHandCrsr)
                 {
-                    _crs.transform.position = Camera.main.transform.position + (handGesture.normalized) * hitInfo.distance * 0.95F;
+                    _crs.transform.position = Camera.main.transform.position + (handGestureDirection.normalized) * hitInfo.distance * 0.95F;
                 }
             }
             else
@@ -69,7 +70,7 @@ public class HandInteraction : MonoBehaviour, HandInteractionMaster
                 CurFocusedObj = null;
                 if (showHandCrsr)
                 {
-                    _crs.transform.position = Camera.main.transform.position + (handGesture.normalized * 2F);
+                    _crs.transform.position = Camera.main.transform.position + (handGestureDirection.normalized * 2F);
                 }
             }
         }
